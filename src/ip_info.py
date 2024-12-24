@@ -27,12 +27,10 @@ import pytz
 import urllib3
 from datetime import datetime
 
-class GetDetailIPv4Info:
+class IPv4InfoRetriever:
     """
-    Get detailed information about an IPv4 address.
-
-    This class retrieves information about an IPv4 address using the ipinfo.io API. 
-    Returns details such as the IP's hostname, city, region, country, location, timezone, organization, and more.
+    Retrieve detailed information from an IPv4 address using ipinfo.io API. 
+    Return details such as the IP's hostname, city, region, country, location, timezone, organization...
 
     Parameters
     ----------
