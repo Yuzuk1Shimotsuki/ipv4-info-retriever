@@ -1,7 +1,8 @@
 """
 The MIT License (MIT)
 
-Copyright (c) 2024 Yuzuk1Shimotsuki
+Copyright (c) 2024 ChocolaMilk92
+Copyright (c) 2025 Yuzuk1Shimotsuki
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -27,87 +28,19 @@ import pytz
 import urllib3
 from datetime import datetime
 
-class IPv4InfoRetriever:
+class IPv4info:
     """
-    Retrieve detailed information from an IPv4 address using ipinfo.io API. 
-    Return details such as the IP's hostname, city, region, country, location, timezone, organization...
+    Retrieving detail information from a IPv4 address.
 
     Parameters
     ----------
-    ip_address : str
-        The IPv4 address to retrieve information for. Defaults to "json", which fetches details for the client IP.
-
-    Attributes
-    ----------
-    all : dict
-        A dictionary containing all relevant information about the IP address.
-
-    hostname : str
-        The hostname associated with the IP address.
-
-    ip : str
-        The IP address itself.
-
-    city : str
-        The city associated with the IP address.
-
-    region : str
-        The region/state associated with the IP address.
-
-    country : str
-        The country associated with the IP address.
-
-    location : tuple
-        A tuple containing the latitude and longitude of the IP address.
-
-    organization : str
-        The organization associated with the IP address.
-
-    postal : str
-        The postal code associated with the IP address.
-
-    time : datetime.datetime
-        The current UTC time in the IP address's timezone.
-
-    timezone : pytz.timezone
-        The timezone associated with the IP address.
-
-    bogon : bool
-        A boolean indicating whether the IP address is a bogon address.
+    ip_adress: str
+        The IP address to get information
 
     Returns
     -------
-    dict
-        A dictionary containing all available details about the IPv4 address.
-
-    Raises
-    ------
-    ValueError
-        If the API returns an error, such as an invalid IP address or rate-limit exceeded.
-
-    Exception
-        For any other unexpected errors during the API call.
-
-    Examples
-    --------
-    Retrieve information about a public IP address:
-
-    >>> from getdetailipv4info import GetDetailIPv4Info
-    >>> ip_info = GetDetailIPv4Info("8.8.8.8")
-    >>> ip_info.city
-    'Mountain View'
-    >>> ip_info.country
-    'US'
-    >>> ip_info.location
-    ('37.3860', '-122.0838')
-
-    Handle invalid IP addresses:
-
-    >>> try:
-    >>>     ip_info = GetDetailIPv4Info("invalid_ip")
-    >>> except ValueError as e:
-    >>>     print(f"Error: {e}")
-    
+    dict:
+        Dictonary of all relevant information(s) of the IP address.
     """
     def __init__(self, ip_address: str = "json") -> None:
         self.ip_address = ip_address
@@ -127,7 +60,7 @@ class IPv4InfoRetriever:
         return str(self.all_data)
         
     @property
-    def all(self) -> dict:
+    def all(self) -> str:
         "Returns all information as a dictionary"
         return self.all_data
     
@@ -155,11 +88,14 @@ class IPv4InfoRetriever:
     def country(self) -> str:
         "Returns the country of the IP belongs to"
         return self.all_data["country"] if "country" in self.all_data else None
-    
+        
     @property
     def location(self) -> tuple:
         "Returns the latitude and longitude information of the IP"
-        return tuple(self.all_data["loc"].split(",")) if "loc" in self.all_data else None
+        if "loc" in self.all_data:
+            latitude, longitude = self.all_data["loc"].split(",")[0], self.all_data["loc"].split(",")[1]
+            return (latitude, longitude)
+        return None
     
     @property
     def organization(self) -> str:
@@ -177,13 +113,11 @@ class IPv4InfoRetriever:
         return datetime.now(pytz.timezone(self.all_data["timezone"])) if "timezone" in self.all_data else None
 
     @property
-    def timezone(self) -> pytz.timezone:
+    def timezone(self) -> str:
         "Returns the timezone of the IP"
-        return pytz.timezone(self.all_data["timezone"]) if "timezone" in self.all_data else None
+        return self.all_data["timezone"] if "timezone" in self.all_data else None
     
     @property
     def bogon(self) -> bool:
         "Checks if the IP is a bogon address"
         return self.all_data["bogon"] if "bogon" in self.all_data else None
-
-
